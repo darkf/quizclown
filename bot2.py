@@ -5,11 +5,6 @@
 # - got some help from old stackoverflow page:
 #   http://stackoverflow.com/questions/2719017/how-to-set-timeout-on-pythons-socket-recv-method
 
-ircd = "some-irc-server.com"
-port = 6667
-chan = "#some-channel"
-owner = "some-person"		# admin rights, for e.g. "!quit" command
-
 import hints
 import heuristic
 
@@ -22,6 +17,13 @@ import math
 import random
 import time
 
+# read configuration
+conf = open("config.txt", "r")
+ircd, port, chan, owner = [conf.readline().strip() for n in range(4)]
+conf.close()
+port = int(port)
+
+# setup variables
 scores = {owner: 0}		# username -> score dictionary
 qid = 0				# current question
 quest = []			# question table
@@ -42,6 +44,8 @@ do_scores = 0			# !scores
 score_throttle = time.time()	# !scores throttle timer
 
 #########################################################################
+
+# read questions/answers database
 
 count = 0
 
@@ -75,7 +79,7 @@ print "connected"
 
 s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\nJOIN "+chan+"\r\n")
 
-# check if an answer is good enough.
+# procedure to check if an answer is good enough.
 def good_enough(quote, ans):
 	if quote.upper() == ans.upper() or (quote+"s").upper()==ans.upper() or quote.upper()==(ans+"s").upper():
 		return 1

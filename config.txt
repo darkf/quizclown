@@ -1,0 +1,4 @@
+irc-server-name.com
+6667
+#channel-name
+owner-name
