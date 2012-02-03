@@ -19,7 +19,7 @@ import time
 
 # read configuration
 conf = open("config.txt", "r")
-ircd, port, chan, owner = [conf.readline().strip() for n in range(4)]
+ircd, port, chan, owner = [conf.readline().strip() for n in xrange(4)]
 conf.close()
 port = int(port)
 
@@ -67,7 +67,7 @@ f.close()
 qc = count / 2
 
 # shuffle question meta-indices
-qnums = range(qc)
+qnums = xrange(qc)
 random.shuffle(qnums)
 
 ########################################################################

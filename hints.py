@@ -7,7 +7,7 @@ import random
 import math
 
 def make_hint(ans):
-	hintable = [x for x in range(len(ans)) if str.isalnum(ans[x])] # offsets of characters we may ellipsify
+	hintable = [x for x in xrange(len(ans)) if str.isalnum(ans[x])] # offsets of characters we may ellipsify
 	
 	# we ceil to be safe if we have less than 8 chars :D
 	qty = math.ceil(len(hintable) * 3.5/8.0)
