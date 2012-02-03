@@ -10,7 +10,7 @@ port = 6667
 chan = "#some-channel"
 owner = "some-person"		# admin rights, for e.g. "!quit" command
 
-import hint
+import hints
 import heuristic
 
 import sys
@@ -175,7 +175,7 @@ while 1:
 
 
 	if time.time() >= hint_timer and waiting==1:	
-		hint = hint.make_hint(heuristic.plain_question(ans[qnums[qid]]))	# hint v2
+		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))	# hint v2
 		bot_say("Hint: %s" % hint)
 		hint_timer = time.time() + 10
 		throttle = time.time() + 3
