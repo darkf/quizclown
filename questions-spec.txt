@@ -1,0 +1,20 @@
+
+The first line of questions.txt names the source of the questions,
+i.e. where they were taken from. The subsequent lines follow the
+pattern:
+	<question 1>
+	<answer 1>
+	    ...
+	<question N>
+	<answer N>
+
+In the answer strings, a substring answer can be denoted using
+# delimiters. For example, the question/answer lines
+
+	What is this file ?
+	The #specification#
+
+will lead to both "The specification" and "specification" being
+accepted as valid answers to the question "What is this file ?".
+
+

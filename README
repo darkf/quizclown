@@ -1,0 +1,23 @@
+Quick and dirty IRC trivia bot.
+
+It's my first time writing Python, so my code
+will look ugly to more competent programmers.
+
+----------------------------------------------
+
+How-to guide
+
+1. Get some questions and answers into the
+   questions.txt file. See questions-spec.txt for
+   details on the file format.
+
+   The script import-moxquizz.py will import the 
+   moxquizz question database into quizclown (for details, 
+   see the comments in import-moxquizz.py).
+
+2. Set up parameters (IRC server, port, channel, bot owner)
+   by editing the first few lines of bot2.py
+
+3. At the *nix shell, type
+	$ ./run
+	
