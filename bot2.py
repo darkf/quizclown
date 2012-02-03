@@ -10,8 +10,8 @@ port = 6667
 chan = "#some-channel"
 owner = "some-person"		# admin rights, for e.g. "!quit" command
 
-from hint import *
-from heuristic import *
+import hint
+import heuristic
 
 import sys
 import socket
@@ -108,8 +108,8 @@ while 1:
 			user = words[0].split(":")[1]
 			user = user.split("!")[0]
 	
-			heur = heuristic(ans[qnums[qid]])
-			full_ans = plain_question(ans[qnums[qid]])
+			heur = heuristic.heuristic(ans[qnums[qid]])
+			full_ans = heuristic.plain_question(ans[qnums[qid]])
 
 			if good_enough(quote, full_ans) or (heur != "" and good_enough(quote, heur)):
 				bot_say("%s got it right in %d seconds" % (user, time.time()-question_time))
@@ -175,7 +175,7 @@ while 1:
 
 
 	if time.time() >= hint_timer and waiting==1:	
-		hint = make_hint(plain_question(ans[qnums[qid]]))	# hint v2
+		hint = hint.make_hint(plain_question(ans[qnums[qid]]))	# hint v2
 		bot_say("Hint: %s" % hint)
 		hint_timer = time.time() + 10
 		throttle = time.time() + 3
