@@ -67,7 +67,7 @@ f.close()
 qc = count / 2
 
 # shuffle question meta-indices
-qnums = xrange(qc)
+qnums = range(qc)
 random.shuffle(qnums)
 
 ########################################################################
