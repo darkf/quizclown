@@ -5,7 +5,7 @@
 # happened.
 
 def heuristic(lin):
-	if str.find(lin, "#") != -1:
+	if '#' in lin:
 		return lin.split("#")[1]
 		print heur
 	else:
