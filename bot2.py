@@ -46,11 +46,11 @@ score_throttle = time.time()	# !scores throttle timer
 count = 0
 
 f = open("questions.txt", "r")
-first = 1
+first = true
 for line in f:
 	if first:
 		source = line		# first line is question source text
-		first = 0
+		first = false
 	else:
 		# even lines are questions, odd lines answers
 		if count % 2 == 0:
