@@ -17,6 +17,8 @@ import math
 import random
 import time
 
+testing = False		# test a 1-player game using stdin/stdout shell
+
 # read configuration
 conf = open("config.txt", "r")
 ircd, port, chan, owner = [conf.readline().strip() for n in xrange(4)]
@@ -32,8 +34,15 @@ qc = 0				# total question count
 question_time = 0		# timestamp of last question asking
 hint_timer = 0			# projected timestamp of next hint giving
 waiting = 2			# bot state
-timeout = time.time() + 10	# projected timestamp of next question asking
-				# (initially, enough timeout to get connected to the ircd)
+
+# projected timestamp of next question asking
+# (initially, enough timeout to get connected to the ircd)
+
+if testing:
+	timeout = time.time()
+else:
+	timeout = time.time() + 10	
+
 heur = ""			# accpeted question substring
 skips = 0			# skip votes
 skippers = []			# skip-voting users
@@ -72,12 +81,12 @@ random.shuffle(qnums)
 
 ########################################################################
 
-s = socket.socket()
-s.connect((ircd, port))
-
-print "connected"
-
-s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\nJOIN "+chan+"\r\n")
+if not testing:
+	s = socket.socket()
+	s.connect((ircd, port))
+	print "connected"
+	s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\nJOIN "+chan+"\r\n")
+	s.setblocking(0)
 
 # procedure to check if an answer is good enough.
 def good_enough(quote, ans):
@@ -87,24 +96,32 @@ def good_enough(quote, ans):
 		return 0
 
 def bot_say(str):
-	s.send("PRIVMSG "+chan+" :"+str+"\r\n")
+	if testing:
+		print str
+	else:
+		s.send("PRIVMSG "+chan+" :"+str+"\r\n")
 
 bot_say("Hello, I'm a bot that asks trivia questions.");
 bot_say("Questions from: %s" % source)
 
-s.setblocking(0)
-
 while 1:
-	# select trick owed to old stackoverflow discussion 
-	ready = select.select([s], [], [], 1)
+	if not testing:
+		# select trick owed to old stackoverflow discussion 
+		ready = select.select([s], [], [], 1)
+	else:
+		ready = select.select([sys.stdin], [], [], 1)	
+	
 	if ready[0]:
-		line = s.recv(1024)
+		if testing:
+			line = ":"+owner+" PRIVMSG "+chan+" :" + raw_input() + "\r\n"
+		else:
+			line = s.recv(1024)
 
 		words = line.split(" ")
 
-		if words[0]=='PING':
+		if words[0]=='PING' and not testing:
 			s.send("PONG "+word[1]+"\r\n")
-			
+
 		if len(words)>2 and words[1]=='PRIVMSG':
 			quote = line.split(":")[2]
 			quote = quote.split("\r\n")[0]
@@ -154,7 +171,7 @@ while 1:
 				if(skippers.count(user) == 0):				
 					skippers.append(user)					
 					skips += 1
-					if skips > 3:
+					if skips >= len(scores)/3.0:
 						skips = 0
 						skippers = []
 						bot_say("skipping question "+str(qnums[qid]+1)+"")

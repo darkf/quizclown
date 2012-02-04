@@ -1,0 +1,17 @@
+Quizclown commands
+
+!hint
+ Give a hint for the current question.
+ Throttled.
+
+!ask
+ Short-circuit question asking delay.
+
+!skip
+ Vote to skip the current question.
+
+!quit
+ (owner only) shut down quizclown.
+
+!score or !scores
+ Show current scores.
