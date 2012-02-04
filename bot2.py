@@ -2,8 +2,9 @@
 
 # - based somewhat on example code at http://www.osix.net/modules/article/?id=780
 # - based on ircbot.ps by darkf
-# - got some help from old stackoverflow page:
+# - got some help from reading old stackoverflow pages:
 #   http://stackoverflow.com/questions/2719017/how-to-set-timeout-on-pythons-socket-recv-method
+#   http://stackoverflow.com/questions/613183/python-sort-a-dictionary-by-value
 
 import hints
 import heuristic
@@ -17,7 +18,7 @@ import math
 import random
 import time
 
-testing = False		# test a 1-player game using stdin/stdout shell
+testing = False		# test bot using stdin/stdout debug shell
 
 # read configuration
 conf = open("config.txt", "r")
@@ -39,6 +40,8 @@ waiting = 2			# bot state
 # (initially, enough timeout to get connected to the ircd)
 
 if testing:
+	print "debugging shell"
+	print "syntax: username word [...]"
 	timeout = time.time()
 else:
 	timeout = time.time() + 10	
@@ -106,14 +109,17 @@ bot_say("Questions from: %s" % source)
 
 while 1:
 	if not testing:
-		# select trick owed to old stackoverflow discussion 
 		ready = select.select([s], [], [], 1)
 	else:
 		ready = select.select([sys.stdin], [], [], 1)	
 	
 	if ready[0]:
 		if testing:
-			line = ":"+owner+" PRIVMSG "+chan+" :" + raw_input() + "\r\n"
+			comlin = raw_input()
+			if len(comlin.split(" ")) > 1:
+				cuser = comlin.split(" ")[0]
+				ctext = comlin.split(" ")[1]
+				line = ":"+cuser+" PRIVMSG "+chan+" :" + ctext + "\r\n"
 		else:
 			line = s.recv(1024)
 
@@ -203,11 +209,8 @@ while 1:
 
 	if math.floor(time.time()) % 150 == 0 or do_scores == 1:
 		bot_say("Scores")
-		keylist = scores.keys()
-		keylist.sort()
-		for key in keylist:
-			bot_say("%s: %d points" % (key, scores[key]))
-
+		for player in sorted(scores, key=scores.get, reverse=True):
+			bot_say("%s: %d points" % (player, scores[player]))
 		do_scores = 0
 		score_throttle = time.time() + 5
 
