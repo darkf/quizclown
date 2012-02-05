@@ -11,6 +11,11 @@ def make_hint(ans):
 	
 	# we ceil to be safe if we have less than 8 chars :D
 	qty = math.ceil(len(hintable) * 3.5/8.0)
+	
+	# but if len(hintable) = 1, qty = 0 is preferable
+	if len(hintable) == 1:
+		qty = 0
+
 	while len(hintable) > qty:
 		ch = random.randint(0, len(hintable)-1)
 		n = hintable[ch]

@@ -1,5 +1,7 @@
 # Quick and dirty IRC triviabot script
 
+testing = False		# test bot *offline* using stdin/stdout debug shell
+
 # - based somewhat on example code at http://www.osix.net/modules/article/?id=780
 # - based on ircbot.ps by darkf
 # - got some help from reading old stackoverflow pages:
@@ -17,8 +19,6 @@ import os
 import math
 import random
 import time
-
-testing = False		# test bot using stdin/stdout debug shell
 
 # read configuration
 conf = open("config.txt", "r")
@@ -40,8 +40,8 @@ waiting = 2			# bot state
 # (initially, enough timeout to get connected to the ircd)
 
 if testing:
-	print "debugging shell"
-	print "syntax: username word [...]"
+	print "multiplayer trivia debugging shell"
+	print "syntax: username [word [...]]"
 	timeout = time.time()
 else:
 	timeout = time.time() + 10	
@@ -118,8 +118,10 @@ while 1:
 			comlin = raw_input()
 			if len(comlin.split(" ")) > 1:
 				cuser = comlin.split(" ")[0]
-				ctext = comlin.split(" ")[1]
+				ctext = comlin[comlin.find(" ")+1:]
 				line = ":"+cuser+" PRIVMSG "+chan+" :" + ctext + "\r\n"
+			else:
+				line = ""
 		else:
 			line = s.recv(1024)
 
@@ -172,12 +174,16 @@ while 1:
 					do_scores = 1
 					score_throttle = time.time() + 5
 
-			# this should check for concurrent user-votes
-			if quote=="!skip":
-				if(skippers.count(user) == 0):				
+			# check for concurrent user-skip-votes
+			if quote=="!skip" and waiting==1:
+				if skippers.count(user) == 0:
 					skippers.append(user)					
 					skips += 1
-					if skips >= len(scores)/3.0:
+					if len(scores)/3 - skips == 1:
+						bot_say("Need one more vote to skip this question")
+					elif len(scores)/3 - skips > 0:
+						bot_say("Need %d more votes to skip this question" % (len(scores)/3 - skips))
+					if skips >= (len(scores)/3):
 						skips = 0
 						skippers = []
 						bot_say("skipping question "+str(qnums[qid]+1)+"")
@@ -202,15 +208,22 @@ while 1:
 
 
 	if time.time() >= hint_timer and waiting==1:	
-		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))	# hint v2
+		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))
 		bot_say("Hint: %s" % hint)
 		hint_timer = time.time() + 10
 		throttle = time.time() + 3
 
 	if math.floor(time.time()) % 150 == 0 or do_scores == 1:
-		bot_say("Scores")
-		for player in sorted(scores, key=scores.get, reverse=True):
-			bot_say("%s: %d points" % (player, scores[player]))
+		if sum(scores.values()) == 0:
+			bot_say("No score yet")
+		else:
+			bot_say("Scores")
+			for player in sorted(scores, key=scores.get, reverse=True):
+				if scores[player] > 1:
+					bot_say("%s: %d points" % (player, scores[player]))
+				elif scores[player] > 0:
+					bot_say("%s: %d point" % (player, scores[player]))
+
 		do_scores = 0
 		score_throttle = time.time() + 5
 
@@ -226,6 +239,4 @@ while 1:
 		question_time = time.time()
 		hint_timer = time.time() + 8
 		waiting = 1
-
-
 
