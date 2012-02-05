@@ -42,6 +42,7 @@ waiting = 2			# bot state
 if testing:
 	print "multiplayer trivia debugging shell"
 	print "syntax: username [word [...]]"
+	print ""
 	timeout = time.time()
 else:
 	timeout = time.time() + 10	
@@ -169,10 +170,9 @@ while 1:
 					hint_timer = time.time()
 					throttle = time.time() + 3
 
-			if (quote=="!scores" or quote=="!score") and do_scores == 0:
+			if quote=="!scores" or quote=="!score":
 				if time.time() >= score_throttle:
 					do_scores = 1
-					score_throttle = time.time() + 5
 
 			# check for concurrent user-skip-votes
 			if quote=="!skip" and waiting==1:
@@ -213,7 +213,7 @@ while 1:
 		hint_timer = time.time() + 10
 		throttle = time.time() + 3
 
-	if math.floor(time.time()) % 150 == 0 or do_scores == 1:
+	if time.time() >= score_throttle and do_scores:
 		if sum(scores.values()) == 0:
 			bot_say("No score yet")
 		else:
@@ -226,6 +226,9 @@ while 1:
 
 		do_scores = 0
 		score_throttle = time.time() + 5
+
+	if int(time.time()) % 100 == 0:
+		do_scores = 1
 
 	# timeout between questions. can be skipped
 	# by using the "!ask" command.

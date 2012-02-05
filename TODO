@@ -2,5 +2,6 @@
 	- more elaborate score-keeping ?
 	  e.g. resetting every N minutes
 
-	- throttle !score
+	- !susp (suspend) command
+
 

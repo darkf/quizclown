@@ -14,4 +14,7 @@ Quizclown commands
  (owner only) shut down quizclown.
 
 !score or !scores
- Show current scores.
+ Show current scores. 
+ Gets invoked automatically every 100 seconds;
+ throttled.
+ 
