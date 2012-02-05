@@ -1,2 +1,6 @@
-	- Improve concurrent vote counter for !skip [preliminary one done]
+
+	- more elaborate score-keeping ?
+	  e.g. resetting every N minutes
+
+	- throttle !score
 
