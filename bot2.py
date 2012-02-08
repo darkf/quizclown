@@ -175,7 +175,7 @@ while 1:
 					do_scores = 1
 
 			# check for concurrent user-skip-votes
-			if quote=="!skip" and waiting==1:
+			if (quote=="!skip" or quote=="!next") and waiting==1:
 				if skippers.count(user) == 0:
 					skippers.append(user)					
 					skips += 1

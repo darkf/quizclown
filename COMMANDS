@@ -7,7 +7,7 @@ Quizclown commands
 !ask
  Short-circuit question asking delay.
 
-!skip
+!skip or !next
  Vote to skip the current question.
 
 !quit
