@@ -28,3 +28,11 @@ Updating quizclown
    keeping your custom config.txt and questions.txt files
    intact.
 
+Custom login scripts
+
+   A 1-line custom login command can be put in
+   a file named "login-command". It will be executed
+   after connection to the chat server, and the channel
+   will only be JOINed after a 20-second delay.
+
+

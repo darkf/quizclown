@@ -26,6 +26,15 @@ ircd, port, chan, owner = [conf.readline().strip() for n in xrange(4)]
 conf.close()
 port = int(port)
 
+# check for custom login script
+use_custom_login = True
+try:
+	lscr = open("login-command", "r")
+	login_script = lscr.readline().strip()
+	lscr.close()
+except IOError:
+	use_custom_login = False	
+
 # setup variables
 scores = {owner: 0}		# username -> score dictionary
 qid = 0				# current question
@@ -55,6 +64,8 @@ throttle = time.time()		# !hint throttle timer
 
 do_scores = 0			# !scores
 score_throttle = time.time()	# !scores throttle timer
+
+login_timer = time.time() + 20
 
 #########################################################################
 
@@ -89,8 +100,19 @@ if not testing:
 	s = socket.socket()
 	s.connect((ircd, port))
 	print "connected"
-	s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\nJOIN "+chan+"\r\n")
+	s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\n")
+	if use_custom_login:
+		print "trying to log in..."
+		s.send("%s\r\n" % login_script)
 	s.setblocking(0)
+	
+	while use_custom_login and time.time() < login_timer:
+		pass
+
+	s.send("JOIN "+chan+"\r\n")	
+
+	if use_custom_login:
+		print "should be logged in now"
 
 # procedure to check if an answer is good enough.
 def good_enough(quote, ans):
@@ -125,6 +147,8 @@ while 1:
 				line = ""
 		else:
 			line = s.recv(1024)
+
+		print "> %s" % line
 
 		words = line.split(" ")
 
