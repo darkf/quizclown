@@ -19,7 +19,7 @@ How to set up quizclown
    by editing config.txt
 
 3. At the *nix shell, type
-	$ ./run
+	 ./run
 	
 Updating quizclown
 
