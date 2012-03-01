@@ -30,7 +30,7 @@ port = int(port)
 # check for custom login script
 use_custom_login = True
 try:
-	lscr = open("login-command", "r")
+	lscr = open("login-command.txt", "r")
 	login_script = lscr.readline().strip()
 	lscr.close()
 except IOError:
