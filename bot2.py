@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Quick and dirty IRC triviabot script
 
 testing = False		# test bot *offline* using stdin/stdout debug shell

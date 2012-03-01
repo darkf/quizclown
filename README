@@ -18,9 +18,10 @@ How to set up quizclown
 2. Set up parameters (IRC server, port, channel, bot owner)
    by editing config.txt
 
-3. At the *nix shell, type
-	 ./run
-	
+3. At the shell, type
+         ./bot2.py	(Unix)
+   or    bot2.py	(Windows)
+
 Updating quizclown
 
    Replace the *.py files in your quizclown directory
