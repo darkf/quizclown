@@ -250,7 +250,7 @@ while 1:
 					bot_say("%s: %d point" % (player, scores[player]))
 
 		do_scores = 0
-		score_throttle = time.time() + 5
+		score_throttle = time.time() + 10
 
 	if int(time.time()) % 100 == 0:
 		do_scores = 1
