@@ -36,6 +36,12 @@ try:
 except IOError:
 	use_custom_login = False	
 
+# bot state
+READY = 0			# ready to ask a new question
+WAIT_ANSWER = 1			# waiting for an answer
+QUEST_DELAY = 2			# delay between questions
+state = QUEST_DELAY
+
 # setup variables
 scores = {owner: 0}		# username -> score dictionary
 qid = 0				# current question
@@ -44,18 +50,13 @@ ans = []			# answer table
 qc = 0				# total question count
 question_time = 0		# timestamp of last question asking
 hint_timer = 0			# projected timestamp of next hint giving
-waiting = 2			# bot state
 
 # projected timestamp of next question asking
-# (initially, enough timeout to get connected to the ircd)
 
 if testing:
-	print "multiplayer trivia debugging shell"
-	print "syntax: username [word [...]]"
-	print ""
 	timeout = time.time()
 else:
-	timeout = time.time() + 10	
+	timeout = time.time() + 10	# enough time to get connected to the ircd
 
 heur = ""			# accpeted question substring
 skips = 0			# skip votes
@@ -97,23 +98,26 @@ random.shuffle(qnums)
 
 ########################################################################
 
-if not testing:
+if testing:
+	print "multiplayer trivia debugging shell"
+	print "syntax: username [word [...]]"
+	print ""
+else:
 	s = socket.socket()
 	s.connect((ircd, port))
 	print "connected"
 	s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\n")
+
+	# custom identification script ?
 	if use_custom_login:
 		print "trying to log in..."
 		s.send("%s\r\n" % login_script)
-	s.setblocking(0)
-	
-	while use_custom_login and time.time() < login_timer:
-		pass
-
-	s.send("JOIN "+chan+"\r\n")	
-
-	if use_custom_login:
+		while time.time() < login_timer:
+			pass
 		print "should be logged in now"
+
+	s.send("JOIN "+chan+"\r\n")
+	s.setblocking(0)
 
 # procedure to check if an answer is good enough.
 def good_enough(quote, ans):
@@ -139,6 +143,7 @@ while 1:
 	
 	if ready[0]:
 		if testing:
+			# local debug shell - parse command
 			comlin = raw_input()
 			if len(comlin.split(" ")) > 1:
 				cuser = comlin.split(" ")[0]
@@ -157,6 +162,7 @@ while 1:
 			s.send("PONG "+word[1]+"\r\n")
 
 		if len(words)>2 and words[1]=='PRIVMSG':
+			# somebody said something
 			quote = line.split(":")[2]
 			quote = quote.split("\r\n")[0]
 	
@@ -166,6 +172,7 @@ while 1:
 			heur = heuristic.heuristic(ans[qnums[qid]])
 			full_ans = heuristic.plain_question(ans[qnums[qid]])
 
+			# was it a correct answer ?
 			if good_enough(quote, full_ans) or (heur != "" and good_enough(quote, heur)):
 				bot_say("%s got it right in %d seconds" % (user, time.time()-question_time))
 				
@@ -175,16 +182,13 @@ while 1:
 				scores[user] += 1
 	
 				qid += 1
-				waiting = 2
+				state = QUEST_DELAY
 				timeout = time.time() + 5
-	
-			if quote=="quizclown":
-				if line.split(":")[3]!="":
-					bot_say("%s: please don't talk to me directly" % user)
-					bot_say("%s: i.e. just type your answers :)" % user)
-	
-			if quote=="!ask" and waiting==2:
-				timeout = time.time()
+		
+			# was it a command ?
+
+			if quote=="!ask" and state==QUEST_DELAY:
+				state = READY
 
 			if quote=="!quit" and user==owner:
 				bot_say("leaving immediately")
@@ -199,9 +203,10 @@ while 1:
 				if time.time() >= score_throttle:
 					do_scores = 1
 
-			# check for concurrent user-skip-votes
-			if (quote=="!skip" or quote=="!next") and waiting==1:
-				if skippers.count(user) == 0:
+			if (quote=="!skip" or quote=="!next") and state==WAIT_ANSWER:
+				if user in skippers:
+					bot_say("%s: you can't vote twice!" % user)
+				else:
 					skippers.append(user)					
 					skips += 1
 					if len(scores)/3 - skips == 1:
@@ -209,12 +214,17 @@ while 1:
 					elif len(scores)/3 - skips > 0:
 						bot_say("Need %d more votes to skip this question" % (len(scores)/3 - skips))
 					if skips >= (len(scores)/3):
+						# got enough votes - skip the question
 						skips = 0
 						skippers = []
 						bot_say("skipping question "+str(qnums[qid]+1)+"")
                                 		qid += 1       
-	        	                        waiting = 2
+	        	                        state = QUEST_DELAY
         	        	                timeout = time.time() + 5				
+
+			if quote=="quizclown":
+				if line.split(":")[3]!="":
+					bot_say("%s: please don't talk to me directly -- just type your answers!" % user)
 
 	if qid >= qc:
 		bot_say("This is all for the quiz.")
@@ -232,7 +242,7 @@ while 1:
 		sys.exit(1)
 
 
-	if time.time() >= hint_timer and waiting==1:	
+	if time.time() >= hint_timer and state==WAIT_ANSWER:	
 		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))
 		bot_say("Hint: %s" % hint)
 		hint_timer = time.time() + 10
@@ -253,18 +263,19 @@ while 1:
 		score_throttle = time.time() + 10
 
 	if int(time.time()) % 100 == 0:
+		# for the players' convenience, we
+		# automatically call the "!score" command
+		# every 100 seconds.
 		do_scores = 1
 
-	# timeout between questions. can be skipped
-	# by using the "!ask" command.
-	if waiting == 2:
-		if time.time() >= timeout:
-			waiting = 0
+	# delay between questions
+	if state == QUEST_DELAY and time.time() >= timeout:
+		state = READY
 
 	# ready to ask a question !
-	if waiting == 0:
+	if state == READY:
 		bot_say("%d: %s" % (qnums[qid]+1, quest[qnums[qid]]))
 		question_time = time.time()
 		hint_timer = time.time() + 8
-		waiting = 1
+		state = WAIT_ANSWER
 
