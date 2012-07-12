@@ -112,8 +112,7 @@ else:
 	if use_custom_login:
 		print "trying to log in..."
 		s.send("%s\r\n" % login_script)
-		while time.time() < login_timer:
-			pass
+		time.sleep(login_timer - time.time())
 		print "should be logged in now"
 
 	s.send("JOIN "+chan+"\r\n")
