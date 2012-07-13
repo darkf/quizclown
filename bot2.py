@@ -65,6 +65,7 @@ skippers = []			# skip-voting users
 throttle = time.time()		# !hint throttle timer
 
 do_scores = 0			# !scores
+auto_scores = time.time() + 100	# periodical automatic scores showing
 score_throttle = time.time()	# !scores throttle timer
 
 login_timer = time.time() + 20
@@ -199,8 +200,7 @@ while 1:
 					throttle = time.time() + 3
 
 			if quote=="!scores" or quote=="!score":
-				if time.time() >= score_throttle:
-					do_scores = 1
+				do_scores = 1
 
 			if (quote=="!skip" or quote=="!next") and state==WAIT_ANSWER:
 				if user in skippers:
@@ -258,13 +258,18 @@ while 1:
 				elif scores[player] > 0:
 					bot_say("%s: %d point" % (player, scores[player]))
 
-		do_scores = 0
 		score_throttle = time.time() + 10
 
-	if int(time.time()) % 100 == 0:
+
+	# Clear score request register even if no scores were displayed --
+	# it's best to discard throttled requests.
+	do_scores = 0
+	
+	if time.time() >= auto_scores:
 		# for the players' convenience, we
 		# automatically call the "!score" command
 		# every 100 seconds.
+		auto_scores = time.time() + 100
 		do_scores = 1
 
 	# delay between questions

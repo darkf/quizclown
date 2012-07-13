@@ -2,9 +2,6 @@
 	- more elaborate score-keeping ?
 	  e.g. resetting every N minutes
 
-	- auto !score caller -- still some
-	  glitches
-
 	- !susp (suspend) command
 
 
