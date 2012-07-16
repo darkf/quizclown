@@ -211,7 +211,7 @@ while 1:
 		
 			# was it a command ?
 
-			if quote=="!ask" and state==QUEST_DELAY:
+			if (quote=="!ask" or quote=="!next") and state==QUEST_DELAY:
 				state = READY
 
 			if quote=="!squit" and user==owner:
@@ -224,7 +224,7 @@ while 1:
 
 			if quote=="!quit" and user==owner:
 				bot_say("leaving immediately")
-				sys.exit(1)
+				sys.exit(0)
 
 			if quote=="!hint":
 				if time.time() >= throttle:

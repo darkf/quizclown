@@ -4,7 +4,7 @@ Quizclown commands
  Give a hint for the current question.
  Throttled.
 
-!ask
+!ask or !next
  Short-circuit question asking delay.
 
 !skip or !next
