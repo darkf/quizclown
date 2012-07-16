@@ -51,6 +51,9 @@ qc = 0				# total question count
 question_time = 0		# timestamp of last question asking
 hint_timer = 0			# projected timestamp of next hint giving
 
+stfu = {owner: 0}		# how many times the bot told a person
+				# not to use "quizclown: answer"
+
 # projected timestamp of next question asking
 
 if testing:
@@ -223,7 +226,18 @@ while 1:
 
 			if quote=="quizclown":
 				if line.split(":")[3]!="":
-					bot_say("%s: please don't talk to me directly -- just type your answers!" % user)
+					# the stfu cruft prevents abuse of this
+
+					if user not in stfu:
+						stfu[user] = 1
+					else:
+						stfu[user] += 1
+
+					if stfu[user] == 1:
+						bot_say("%s: please just type your answers, without typing my name" % user)
+					elif stfu[user] == 2:
+						bot_say("%s: for the second time, please do not type my name like that. I ignore these lines." % user)
+
 
 	if qid >= qc:
 		bot_say("This is all for the quiz.")
