@@ -4,4 +4,10 @@
 
 	- !susp (suspend) command
 
+	- random question delays
+
+	- prettier scoreboards (many score-entries per line)
+
+	- someone suggested a "lurk" mode where the bot 
+	  "randomly asks questions"
 
