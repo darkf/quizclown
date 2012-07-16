@@ -252,11 +252,30 @@ while 1:
 			bot_say("No score yet")
 		else:
 			bot_say("Scores")
+			n = 0
+			scorebuf = ""
+
 			for player in sorted(scores, key=scores.get, reverse=True):
 				if scores[player] > 1:
-					bot_say("%s: %d points" % (player, scores[player]))
+					scoreline = "%s: %d pts" % (player, scores[player])
 				elif scores[player] > 0:
-					bot_say("%s: %d point" % (player, scores[player]))
+					scoreline = "%s: %d pt" % (player, scores[player])
+				else: continue
+
+				if n > 0:
+					scorebuf += ";   "
+				scorebuf += scoreline
+
+				# we display three scores per line
+				n += 1
+				if n % 3 == 0:
+					n = 0
+					bot_say(scorebuf)
+					scorebuf = ""
+
+			# flush scores buffer
+			if scorebuf != "":
+				bot_say(scorebuf)
 
 		score_throttle = time.time() + 10
 
