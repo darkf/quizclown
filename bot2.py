@@ -183,7 +183,7 @@ while 1:
 	
 				qid += 1
 				state = QUEST_DELAY
-				timeout = time.time() + 5
+				timeout = time.time() + random.randrange(5, 10)
 		
 			# was it a command ?
 
@@ -219,7 +219,7 @@ while 1:
 						bot_say("skipping question "+str(qnums[qid]+1)+"")
                                 		qid += 1       
 	        	                        state = QUEST_DELAY
-        	        	                timeout = time.time() + 5				
+        	        	                timeout = time.time() + random.randrange(5, 10)
 
 			if quote=="quizclown":
 				if line.split(":")[3]!="":
