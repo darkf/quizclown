@@ -2,6 +2,7 @@
 # Quick and dirty IRC triviabot script
 
 testing = False		# test bot *offline* using stdin/stdout debug shell
+lurkmode = False	# "lurk" mode - ask questions infrequently
 
 # - based somewhat on example code at http://www.osix.net/modules/article/?id=780
 # - based on ircbot.ps by darkf
@@ -138,6 +139,9 @@ def bot_say(str):
 bot_say("Hello, I'm a bot that asks trivia questions.");
 bot_say("Questions from: %s" % source)
 
+if lurkmode:
+	bot_say("I'm in a special 'lurk' mode - I only ask questions once in a while.")
+
 while 1:
 	if not testing:
 		ready = select.select([s], [], [], 1)
@@ -186,7 +190,10 @@ while 1:
 	
 				qid += 1
 				state = QUEST_DELAY
-				timeout = time.time() + random.randrange(5, 10)
+				if lurkmode:
+					timeout = time.time() + random.randrange(60, 100)			
+				else:
+					timeout = time.time() + random.randrange(5, 10)
 		
 			# was it a command ?
 
@@ -222,7 +229,10 @@ while 1:
 						bot_say("skipping question "+str(qnums[qid]+1)+"")
                                 		qid += 1       
 	        	                        state = QUEST_DELAY
-        	        	                timeout = time.time() + random.randrange(5, 10)
+						if lurkmode:
+							timeout = time.time() + random.randrange(60, 200)			
+						else:
+							timeout = time.time() + random.randrange(5, 10)
 
 			if quote=="quizclown":
 				if line.split(":")[3]!="":
@@ -302,7 +312,10 @@ while 1:
 		# for the players' convenience, we
 		# automatically call the "!score" command
 		# every 100 seconds.
-		auto_scores = time.time() + 100
+		if lurkmode:
+			auto_scores = time.time() + 200
+		else:
+			auto_scores = time.time() + 100
 		do_scores = 1
 
 	# delay between questions

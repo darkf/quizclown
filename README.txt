@@ -39,4 +39,9 @@ Custom login scripts
    after connection to the chat server, and the channel
    will only be JOINed after a 20-second delay.
 
+"Lurk" mode
+
+   By setting the lurkmode variable to true in bot2.py,
+   "Lurk" mode is activated. In this mode, the bot asks
+   questions only once every 1 to 1.5 minute.
 

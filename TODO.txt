@@ -4,6 +4,3 @@
 
 	- !susp (suspend) command
 
-	- someone suggested a "lurk" mode where the bot 
-	  "randomly asks questions"
-
