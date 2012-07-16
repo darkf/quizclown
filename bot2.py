@@ -21,6 +21,7 @@ import os
 import math
 import random
 import time
+import pickle
 
 # read configuration
 conf = open("config.txt", "r")
@@ -72,8 +73,6 @@ do_scores = 0			# !scores
 auto_scores = time.time() + 100	# periodical automatic scores showing
 score_throttle = time.time()	# !scores throttle timer
 
-login_timer = time.time() + 20
-
 #########################################################################
 
 # read questions/answers database
@@ -103,6 +102,21 @@ random.shuffle(qnums)
 
 ########################################################################
 
+
+# check for saved game
+try:
+	sgam = open("sgam.pickle", "r")
+	savedat = pickle.load(sgam)
+	sgam.close()
+	qnums = savedat["qnums"]
+	qid = savedat["qid"]
+	scores = savedat["scores"]
+	stfu = savedat["stfu"]
+	print "saved game loaded"
+except IOError:
+	print "no saved game found"
+
+
 if testing:
 	print "multiplayer trivia debugging shell"
 	print "syntax: username [word [...]]"
@@ -117,7 +131,7 @@ else:
 	if use_custom_login:
 		print "trying to log in..."
 		s.send("%s\r\n" % login_script)
-		time.sleep(login_timer - time.time())
+		time.sleep(25)
 		print "should be logged in now"
 
 	s.send("JOIN "+chan+"\r\n")
@@ -200,6 +214,14 @@ while 1:
 			if quote=="!ask" and state==QUEST_DELAY:
 				state = READY
 
+			if quote=="!squit" and user==owner:
+				# save and quit
+				sgam = open("sgam.pickle", "w")
+				pickle.dump({"qnums": qnums, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
+				sgam.close()
+				bot_say("Game saved; leaving")
+				sys.exit(0)
+
 			if quote=="!quit" and user==owner:
 				bot_say("leaving immediately")
 				sys.exit(1)
@@ -275,9 +297,8 @@ while 1:
 		if sum(scores.values()) == 0:
 			bot_say("No score yet")
 		else:
-			bot_say("Scores")
 			n = 0
-			scorebuf = ""
+			scorebuf = "Scores -- "
 
 			for player in sorted(scores, key=scores.get, reverse=True):
 				if scores[player] > 1:

@@ -45,3 +45,11 @@ Custom login scripts
    "Lurk" mode is activated. In this mode, the bot asks
    questions only once every 1 to 1.5 minute.
 
+Saved games
+
+   If a game is quit using !squit, the game is saved
+   into the file sgam.pickle, which is automatically
+   checked for when quizclown boots up.
+
+
+

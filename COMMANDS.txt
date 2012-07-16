@@ -10,6 +10,9 @@ Quizclown commands
 !skip or !next
  Vote to skip the current question.
 
+!squit
+ (owner only) save game and shut down quizclown.
+
 !quit
  (owner only) shut down quizclown.
 
