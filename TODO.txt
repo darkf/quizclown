@@ -5,7 +5,12 @@
 	- !susp (suspend) command
 
 	- comments:
-		"It gives hints to fast btw"
-		"make it not show the score constantly"
-		"remove the MOTD"
+		"It gives hints to fast btw"		(tweaked)
+		"make it not show the score constantly"	(tweaked)
+		"remove the MOTD"			(tweaked)
+
+	- throttled auto rejoin on kick / ban ?
+
+	- auto saves every N seconds in case
+	  there's a crash ?
 
