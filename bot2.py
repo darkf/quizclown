@@ -52,6 +52,7 @@ ans = []			# answer table
 qc = 0				# total question count
 question_time = 0		# timestamp of last question asking
 hint_timer = 0			# projected timestamp of next hint giving
+rs_throttle = time.time()	# reshuffle throttle
 
 stfu = {owner: 0}		# how many times the bot told a person
 				# not to use "quizclown: answer"
@@ -261,6 +262,15 @@ while 1:
 							timeout = time.time() + random.randrange(60, 200)			
 						else:
 							timeout = time.time() + random.randrange(5, 10)
+
+			if quote=="!reshuffle" and time.time() >= rs_throttle:
+				qnums = range(qc)
+				shuffle_sta = random.getstate()
+				random.shuffle(qnums)
+				qid = 0
+				state = READY
+				rs_throttle = time.time() + 150
+
 
 			if len(quote.split(":")) > 1 and quote.split(":")[0]=="quizclown":
 				# the stfu cruft prevents abuse of this

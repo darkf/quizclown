@@ -21,3 +21,6 @@ Quizclown commands
  Gets invoked automatically every 100 seconds;
  throttled.
  
+!reshuffle
+ Re-shuffle the questions and restart
+ asking them.
