@@ -184,7 +184,7 @@ while 1:
 
 		if len(words)>2 and words[1]=='PRIVMSG':
 			# somebody said something
-			quote = line.split(":")[2]
+			quote = ":".join(line.split(":")[2:])
 			quote = quote.split("\r\n")[0]
 	
 			user = words[0].split(":")[1]
