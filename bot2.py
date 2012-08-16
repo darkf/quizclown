@@ -3,6 +3,7 @@
 
 testing = False		# test bot *offline* using stdin/stdout debug shell
 lurkmode = False	# "lurk" mode - ask questions infrequently
+exec_shell = False
 
 # - based somewhat on example code at http://www.osix.net/modules/article/?id=780
 # - based on ircbot.ps by darkf
@@ -22,6 +23,11 @@ import math
 import random
 import time
 import pickle
+
+if exec_shell:
+	log_out = sys.stderr
+else:
+	log_out = sys.stdout
 
 # read configuration
 conf = open("config.txt", "r")
@@ -123,27 +129,27 @@ try:
 	random.setstate(save_shuffle_sta)
 	random.shuffle(qnums)
 
-	print "saved game loaded"
+	print >> log_out, "saved game loaded"
 except IOError:
-	print "no saved game found"
+	print >> log_out, "no saved game found"
 
 
 if testing:
-	print "multiplayer trivia debugging shell"
-	print "syntax: username [word [...]]"
-	print ""
+	print >> log_out, "multiplayer trivia debugging shell"
+	print >> log_out, "syntax: username [word [...]]"
+	print >> log_out, ""
 else:
 	s = socket.socket()
 	s.connect((ircd, port))
-	print "connected"
+	print >> log_out, "connected"
 	s.send("NICK quizclown\r\nUSER quizclown 0 * :trivia quiz bot\r\n")
 
 	# custom identification script ?
 	if use_custom_login:
-		print "trying to log in..."
+		print >> log_out, "trying to log in..."
 		s.send("%s\r\n" % login_script)
 		time.sleep(25)
-		print "should be logged in now"
+		print >> log_out, "should be logged in now"
 
 	s.send("JOIN "+chan+"\r\n")
 	s.setblocking(0)
@@ -157,7 +163,7 @@ def good_enough(quote, ans):
 
 def bot_say(str):
 	if testing:
-		print str
+		print >> log_out, str
 	else:
 		s.send("PRIVMSG "+chan+" :"+str+"\r\n")
 
@@ -170,12 +176,31 @@ def print_info():
 	if lurkmode:
 		bot_say("the bot is in 'lurk' (low question frequency) mode")
 
+if exec_shell:
+	print("python exec shell:")
+	sys.stdout.write("% ")
+	sys.stdout.flush()
+
 while 1:
 	if not testing:
+		if exec_shell:
+			shell_ready = select.select([sys.stdin], [], [], 1)
 		ready = select.select([s], [], [], 1)
 	else:
 		ready = select.select([sys.stdin], [], [], 1)	
 	
+	if exec_shell:
+		if shell_ready[0]:
+			command = raw_input()
+			print >> log_out, "running '%s'" % command
+			try:
+				exec(command)
+			except:
+				print "error in command"
+			sys.stdout.flush()
+			sys.stdout.write("% ")
+			sys.stdout.flush()
+
 	if ready[0]:
 		if testing:
 			# local debug shell - parse command
@@ -189,7 +214,7 @@ while 1:
 		else:
 			line = s.recv(1024)
 
-		print "> %s" % line
+		print >> log_out, "> %s" % line
 
 		words = line.split(" ")
 
@@ -203,7 +228,7 @@ while 1:
 			user = user.split("!")[0]
 			new_nick = ":".join(line.split(":")[2:])
 			new_nick = new_nick.split("\r\n")[0]
-			print "%s -> %s" % (user, new_nick)
+			print >> log_out, "%s -> %s" % (user, new_nick)
 			scores[new_nick] = scores[user]
 			del scores[user]
 

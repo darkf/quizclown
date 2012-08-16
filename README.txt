@@ -51,5 +51,20 @@ Saved games
    into the file sgam.pickle, which is automatically
    checked for when quizclown boots up.
 
+Exec shell
+   
+   By setting this option to true in the top of bot2.py,
+   stdin/stdout will be a python shell, while the bot log
+   will go to stderr. For example, you can do: (Linux syntax)
 
+	$ ./bot2.py 2>>log.txt
+	python exec shell:
+	% scores['bob'] = 9000
+	% print scores
+	{'bob': 9000}
+	% 
+
+   And perhaps look at log.txt on another terminal.
+   This is meant to be useful if something goes weird
+   while the bot is online.
 
