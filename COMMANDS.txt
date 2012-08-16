@@ -10,18 +10,6 @@ Quizclown commands
 !skip or !next
  Vote to skip the current question.
 
-!squit
- (owner only) save game and shut down quizclown.
-
-!quit
- (owner only) shut down quizclown.
-
-!clear
- (owner only) clear scores.
-
-!fskip
- (owner only) skip the question.
-
 !score or !scores
  Show current scores. 
  Gets invoked automatically every 100 seconds;
@@ -33,3 +21,15 @@ Quizclown commands
 
 !info
  Show commands, source code URL, questions source.
+
+!squit
+ (owner only) save game and shut down quizclown.
+
+!quit
+ (owner only) shut down quizclown.
+
+!clear
+ (owner only) clear scores.
+
+!fskip
+ (owner only) skip the question.
