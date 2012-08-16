@@ -58,6 +58,9 @@ info_throttle = time.time()	# !info command throttle
 stfu = {owner: 0}		# how many times the bot told a person
 				# not to use "quizclown: answer"
 
+skip_stfu = {owner: 0}		# how many times the bot told a person
+				# not to vote (!skip) twice
+
 # projected timestamp of next question asking
 
 if testing:
@@ -253,7 +256,14 @@ while 1:
 
 			if (quote=="!skip" or quote=="!next") and state==WAIT_ANSWER:
 				if user in skippers:
-					bot_say("%s: you can't vote twice!" % user)
+					if user not in skip_stfu:
+						skip_stfu[user] = 1
+					else:
+						skip_stfu[user] += 1
+					if skip_stfu[user] == 1:
+						bot_say("%s: you can't vote twice!" % user)
+					elif skip_stfu[user] == 2:
+						bot_say("%s: for the second and last time, you cannot vote twice." % user)
 				else:
 					skippers.append(user)					
 					skips += 1
@@ -265,6 +275,7 @@ while 1:
 						# got enough votes - skip the question
 						skips = 0
 						skippers = []
+						skip_stfu = {owner: 0}
 						bot_say("skipping question "+str(qnums[qid]+1)+"")
                                 		qid += 1       
 	        	                        state = QUEST_DELAY
