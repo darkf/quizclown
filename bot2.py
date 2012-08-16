@@ -256,15 +256,11 @@ while 1:
 					sgam.close()
 					bot_say("Game saved; leaving")
 					sys.exit(0)
-				else:
-					bot_say("Only owner can !squit")
 
 			if quote=="!quit":
 				if user==owner:
 					bot_say("Leaving immediately")
 					sys.exit(0)
-				else:
-					bot_say("Only owner can !quit")
 
 			if quote=="!hint":
 				if time.time() >= throttle:
@@ -327,8 +323,6 @@ while 1:
 				if user == owner:
 					scores = {owner: 0}
 					bot_say("Scores cleared")
-				else:
-					bot_say("Only owner can !clear")
 
 			if len(quote.split(":")) > 1 and quote.split(":")[0]=="quizclown":
 				# the stfu cruft prevents abuse of this
