@@ -297,6 +297,13 @@ while 1:
 				info_throttle = time.time() + 60
 				print_info()
 
+			if quote == "!clear":
+				if user == owner:
+					scores = {owner: 0}
+					bot_say("Scores cleared")
+				else:
+					bot_say("Only owner can !clear")
+
 			if len(quote.split(":")) > 1 and quote.split(":")[0]=="quizclown":
 				# the stfu cruft prevents abuse of this
 

@@ -16,6 +16,9 @@ Quizclown commands
 !quit
  (owner only) shut down quizclown.
 
+!clear
+ (owner only) clear scores.
+
 !score or !scores
  Show current scores. 
  Gets invoked automatically every 100 seconds;
