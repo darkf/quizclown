@@ -221,17 +221,23 @@ while 1:
 			if (quote=="!ask" or quote=="!next") and state==QUEST_DELAY:
 				state = READY
 
-			if quote=="!squit" and user==owner:
-				# save and quit
-				sgam = open("sgam.pickle", "w")
-				pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
-				sgam.close()
-				bot_say("Game saved; leaving")
-				sys.exit(0)
+			if quote=="!squit":
+				if user==owner:
+					# save and quit
+					sgam = open("sgam.pickle", "w")
+					pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
+					sgam.close()
+					bot_say("Game saved; leaving")
+					sys.exit(0)
+				else:
+					bot_say("Only owner can !squit")
 
-			if quote=="!quit" and user==owner:
-				bot_say("leaving immediately")
-				sys.exit(0)
+			if quote=="!quit":
+				if user==owner:
+					bot_say("Leaving immediately")
+					sys.exit(0)
+				else:
+					bot_say("Only owner can !quit")
 
 			if quote=="!hint":
 				if time.time() >= throttle:
@@ -264,6 +270,7 @@ while 1:
 							timeout = time.time() + random.randrange(5, 10)
 
 			if quote=="!reshuffle" and time.time() >= rs_throttle:
+				bot_say("Reshuffling questions ...")
 				qnums = range(qc)
 				shuffle_sta = random.getstate()
 				random.shuffle(qnums)
