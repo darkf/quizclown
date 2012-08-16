@@ -256,19 +256,18 @@ while 1:
 						else:
 							timeout = time.time() + random.randrange(5, 10)
 
-			if quote=="quizclown":
-				if len(line.split(":")) > 3 and line.split(":")[3]!="":
-					# the stfu cruft prevents abuse of this
+			if len(quote.split(":")) > 1 and quote.split(":")[0]=="quizclown":
+				# the stfu cruft prevents abuse of this
 
-					if user not in stfu:
-						stfu[user] = 1
-					else:
-						stfu[user] += 1
+				if user not in stfu:
+					stfu[user] = 1
+				else:
+					stfu[user] += 1
 
-					if stfu[user] == 1:
-						bot_say("%s: please just type your answers, without typing my name" % user)
-					elif stfu[user] == 2:
-						bot_say("%s: for the second time, please do not type my name like that. I ignore these lines." % user)
+				if stfu[user] == 1:
+					bot_say("%s: please just type your answers, without typing my name" % user)
+				elif stfu[user] == 2:
+					bot_say("%s: for the second time, please do not type my name like that. I ignore these lines." % user)
 
 
 	if qid >= qc:
