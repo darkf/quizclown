@@ -257,7 +257,7 @@ while 1:
 							timeout = time.time() + random.randrange(5, 10)
 
 			if quote=="quizclown":
-				if line.split(":")[3]!="":
+				if len(line.split(":")) > 3 and line.split(":")[3]!="":
 					# the stfu cruft prevents abuse of this
 
 					if user not in stfu:
