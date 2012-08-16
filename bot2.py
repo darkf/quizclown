@@ -312,7 +312,7 @@ while 1:
 	if time.time() >= hint_timer and state==WAIT_ANSWER:	
 		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))
 		bot_say("Hint: %s" % hint)
-		hint_timer = time.time() + 10
+		hint_timer = time.time() + 12
 		throttle = time.time() + 3
 
 	if time.time() >= score_throttle and do_scores:
