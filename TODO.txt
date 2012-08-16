@@ -4,3 +4,8 @@
 
 	- !susp (suspend) command
 
+	- comments:
+		"It gives hints to fast btw"
+		"make it not show the score constantly"
+		"remove the MOTD"
+
