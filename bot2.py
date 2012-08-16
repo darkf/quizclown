@@ -196,8 +196,8 @@ while 1:
 		if words[0]=='PING' and not testing:
 			s.send("PONG "+word[1]+"\r\n")
 
-		if len(words)>2 and words[1]=='PRIVMSG':
-			# somebody said something
+		if len(words)>2 and words[1]=='PRIVMSG' and words[2]==chan:
+			# somebody said something in the channel
 			quote = ":".join(line.split(":")[2:])
 			quote = quote.split("\r\n")[0]
 	
