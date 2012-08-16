@@ -98,6 +98,7 @@ qc = count / 2
 
 # shuffle question meta-indices
 qnums = range(qc)
+shuffle_sta = random.getstate()
 random.shuffle(qnums)
 
 ########################################################################
@@ -108,10 +109,15 @@ try:
 	sgam = open("sgam.pickle", "r")
 	savedat = pickle.load(sgam)
 	sgam.close()
-	qnums = savedat["qnums"]
+	save_shuffle_sta = savedat["shuffle_sta"]
 	qid = savedat["qid"]
 	scores = savedat["scores"]
 	stfu = savedat["stfu"]
+
+	qnums = range(qc)
+	random.setstate(save_shuffle_sta)
+	random.shuffle(qnums)
+
 	print "saved game loaded"
 except IOError:
 	print "no saved game found"
@@ -217,7 +223,7 @@ while 1:
 			if quote=="!squit" and user==owner:
 				# save and quit
 				sgam = open("sgam.pickle", "w")
-				pickle.dump({"qnums": qnums, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
+				pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
 				sgam.close()
 				bot_say("Game saved; leaving")
 				sys.exit(0)
