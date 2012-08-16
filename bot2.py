@@ -53,6 +53,7 @@ qc = 0				# total question count
 question_time = 0		# timestamp of last question asking
 hint_timer = 0			# projected timestamp of next hint giving
 rs_throttle = time.time()	# reshuffle throttle
+info_throttle = time.time()	# !info command throttle
 
 stfu = {owner: 0}		# how many times the bot told a person
 				# not to use "quizclown: answer"
@@ -157,11 +158,14 @@ def bot_say(str):
 	else:
 		s.send("PRIVMSG "+chan+" :"+str+"\r\n")
 
-bot_say("Hello, I'm a bot that asks trivia questions.");
-bot_say("Questions from: %s" % source)
+bot_say("I'm a triviabot. Type !info for details")
 
-if lurkmode:
-	bot_say("I'm in a special 'lurk' mode - I only ask questions once in a while.")
+def print_info():
+	bot_say("code: https://github.com/bl0ckeduser/quizclown/")
+	bot_say("commands: https://raw.github.com/bl0ckeduser/quizclown/master/COMMANDS.txt")
+	bot_say("question source: %s" % source)
+	if lurkmode:
+		bot_say("the bot is in 'lurk' (low question frequency) mode")
 
 while 1:
 	if not testing:
@@ -278,6 +282,9 @@ while 1:
 				state = READY
 				rs_throttle = time.time() + 150
 
+			if quote == "!info" and time.time() >= info_throttle:
+				info_throttle = time.time() + 60
+				print_info()
 
 			if len(quote.split(":")) > 1 and quote.split(":")[0]=="quizclown":
 				# the stfu cruft prevents abuse of this

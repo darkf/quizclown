@@ -24,3 +24,6 @@ Quizclown commands
 !reshuffle
  Re-shuffle the questions and restart
  asking them.
+
+!info
+ Show commands, source code URL, questions source.
