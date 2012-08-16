@@ -263,6 +263,12 @@ while 1:
 			if quote=="!scores" or quote=="!score":
 				do_scores = 1
 
+			if quote == "!fskip" and user == owner and state == WAIT_ANSWER:
+				skips = len(scores) + 1
+				if owner in skippers:
+					skippers.remove(user)
+				quote = "!skip"
+
 			if (quote=="!skip" or quote=="!next") and state==WAIT_ANSWER:
 				if user in skippers:
 					if user not in skip_stfu:

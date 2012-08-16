@@ -19,6 +19,9 @@ Quizclown commands
 !clear
  (owner only) clear scores.
 
+!fskip
+ (owner only) skip the question.
+
 !score or !scores
  Show current scores. 
  Gets invoked automatically every 100 seconds;
