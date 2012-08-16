@@ -196,6 +196,17 @@ while 1:
 		if words[0]=='PING' and not testing:
 			s.send("PONG "+word[1]+"\r\n")
 
+		if len(words) > 2 and words[1]=='NICK':
+			# When a nick change occurs, update
+			# score table with new nick
+			user = words[0].split(":")[1]
+			user = user.split("!")[0]
+			new_nick = ":".join(line.split(":")[2:])
+			new_nick = new_nick.split("\r\n")[0]
+			print "%s -> %s" % (user, new_nick)
+			scores[new_nick] = scores[user]
+			del scores[user]
+
 
 		# hack to allow owner to issue commands in private
 		# (useful if e.g. the bot gets kicked)
