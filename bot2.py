@@ -354,11 +354,11 @@ while 1:
 	if time.time() >= auto_scores:
 		# for the players' convenience, we
 		# automatically call the "!score" command
-		# every 100 seconds.
+		# every N seconds.
 		if lurkmode:
-			auto_scores = time.time() + 200
+			auto_scores = time.time() + 300
 		else:
-			auto_scores = time.time() + 100
+			auto_scores = time.time() + 200
 		do_scores = 1
 
 	# delay between questions
