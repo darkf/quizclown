@@ -344,21 +344,17 @@ while 1:
 					bot_say("%s: for the second time, please do not type my name like that. I ignore these lines." % user)
 
 
+	# TODO: use something fancier like itertools.repeat
+	# for constant stream of random questions
 	if qid >= qc:
-		bot_say("This is all for the quiz.")
-		max = 0
-		key = "nobody"
-		for x in scores:
-			if scores[x] > max:
-				max = scores[x]
-				key = x
-		if max > 0:
-			bot_say("%s has the top score: %d" % (key, max))
-
-		bot_say("cya later ~")
-
-		sys.exit(1)
-
+		# TODO: move !reshuffle code to a common routine
+		bot_say("Reshuffling questions ...")
+		qnums = range(qc)
+		shuffle_sta = random.getstate()
+		random.shuffle(qnums)
+		qid = 0
+		state = READY
+		rs_throttle = time.time() + 150
 
 	if time.time() >= hint_timer and state==WAIT_ANSWER:	
 		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))
