@@ -196,6 +196,15 @@ while 1:
 		if words[0]=='PING' and not testing:
 			s.send("PONG "+word[1]+"\r\n")
 
+
+		# hack to allow owner to issue commands in private
+		# (useful if e.g. the bot gets kicked)
+		if len(words)>2 and words[1]=='PRIVMSG' and words[2]!=chan:
+			user = words[0].split(":")[1]
+			user = user.split("!")[0]
+			if user == owner:
+				words[2] = chan
+
 		if len(words)>2 and words[1]=='PRIVMSG' and words[2]==chan:
 			# somebody said something in the channel
 			quote = ":".join(line.split(":")[2:])
