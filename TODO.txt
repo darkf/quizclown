@@ -9,7 +9,8 @@
 		"make it not show the score constantly"	(tweaked)
 		"remove the MOTD"			(tweaked)
 
-	- throttled auto rejoin on kick / ban ?
+	*** throttled auto rejoin on kick / ban ? ***
+	strongly requested
 
 	- auto saves every N seconds in case
 	  there's a crash ?
