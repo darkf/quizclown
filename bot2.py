@@ -229,8 +229,12 @@ while 1:
 			new_nick = ":".join(line.split(":")[2:])
 			new_nick = new_nick.split("\r\n")[0]
 			print >> log_out, "%s -> %s" % (user, new_nick)
-			if new_nick in scores and user in scores:
-				scores[new_nick] = scores[user]
+			if user in scores:
+				if new_nick not in scores:
+					scores[new_nick] = scores[user]
+				else:
+					scores[new_nick] += scores[user]
+
 				del scores[user]
 
 
