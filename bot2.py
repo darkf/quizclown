@@ -67,6 +67,8 @@ stfu = {owner: 0}		# how many times the bot told a person
 skip_stfu = {owner: 0}		# how many times the bot told a person
 				# not to vote (!skip) twice
 
+kicks = 0
+
 # projected timestamp of next question asking
 
 if testing:
@@ -227,6 +229,18 @@ while 1:
 
 		if words[0]=='PING' and not testing:
 			s.send("PONG "+word[1]+"\r\n")
+
+		# :long-nick KICK #channel quizclown :reason
+		if len(words) > 2 and words[1]=='KICK' and words[3] == 'quizclown':
+			print >> log_out, "got kicked :( ... saving game ..."
+			save_game()	# for convenience
+			kicks += 1
+			if kicks > 3:
+				print >> log_out, "too many kicks; quitting"
+				sys.exit(1)
+			time.sleep(3)
+			print >> log_out, "rejoining now"
+			s.send("JOIN "+chan+"\r\n")
 
 		if len(words) > 2 and words[1]=='NICK':
 			# When a nick change occurs, update
