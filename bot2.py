@@ -83,6 +83,7 @@ throttle = time.time()		# !hint throttle timer
 do_scores = 0			# !scores
 auto_scores = time.time() + 100	# periodical automatic scores showing
 score_throttle = time.time()	# !scores throttle timer
+autosave_timer = time.time() + 60
 
 #########################################################################
 
@@ -175,6 +176,12 @@ def print_info():
 	bot_say("question source: %s" % source)
 	if lurkmode:
 		bot_say("the bot is in 'lurk' (low question frequency) mode")
+
+
+def save_game():
+	sgam = open("sgam.pickle", "w")
+	pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
+	sgam.close()
 
 if exec_shell:
 	print("python exec shell:")
@@ -281,9 +288,7 @@ while 1:
 			if quote=="!squit":
 				if user==owner:
 					# save and quit
-					sgam = open("sgam.pickle", "w")
-					pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
-					sgam.close()
+					save_game()
 					bot_say("Game saved; leaving")
 					sys.exit(0)
 
@@ -417,6 +422,10 @@ while 1:
 
 		score_throttle = time.time() + 10
 
+	if time.time() > autosave_timer:
+		autosave_timer = time.time() + 120
+		save_game()
+		print >> log_out, "autosaved game"
 
 	# Clear score request register even if no scores were displayed --
 	# it's best to discard throttled requests.
