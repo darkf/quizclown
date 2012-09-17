@@ -24,10 +24,7 @@ import random
 import time
 import pickle
 
-if exec_shell:
-	log_out = sys.stderr
-else:
-	log_out = sys.stdout
+log_out = sys.stderr
 
 # read configuration
 conf = open("config.txt", "r")
