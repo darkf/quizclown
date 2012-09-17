@@ -45,6 +45,7 @@ except IOError:
 READY = 0			# ready to ask a new question
 WAIT_ANSWER = 1			# waiting for an answer
 QUEST_DELAY = 2			# delay between questions
+SNOOZING = 3			# for when nobody is around
 state = QUEST_DELAY
 
 # setup variables
@@ -65,6 +66,8 @@ skip_stfu = {owner: 0}		# how many times the bot told a person
 				# not to vote (!skip) twice
 
 kicks = 0
+
+last_sign_of_life = time.time()	# last time anything happened
 
 # projected timestamp of next question asking
 
@@ -207,6 +210,19 @@ while 1:
 			sys.stdout.write("% ")
 			sys.stdout.flush()
 
+
+	# if nothing's been happening for too long,
+	# snooze.
+	if time.time() - last_sign_of_life > 70:
+		if state != SNOOZING:
+			# start snooze
+			bot_say("Snoozing")
+			last_live_state = state
+			state = SNOOZING
+	elif state == SNOOZING:
+		# wake up from snooze
+		state = last_live_state
+
 	if ready[0]:
 		if testing:
 			# local debug shell - parse command
@@ -223,6 +239,10 @@ while 1:
 		print >> log_out, "> %s" % line
 
 		words = line.split(" ")
+
+		if len(words) > 0 and words[0] != 'PING':
+			# something happened
+			last_sign_of_life = time.time()
 
 		if words[0]=='PING' and not testing:
 			s.send("PONG "+word[1]+"\r\n")
@@ -442,7 +462,7 @@ while 1:
 	# it's best to discard throttled requests.
 	do_scores = 0
 	
-	if time.time() >= auto_scores:
+	if time.time() >= auto_scores and state != SNOOZING:
 		# for the players' convenience, we
 		# automatically call the "!score" command
 		# every N seconds.
@@ -463,3 +483,4 @@ while 1:
 		hint_timer = time.time() + 8
 		state = WAIT_ANSWER
 
+	
