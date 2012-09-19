@@ -86,6 +86,7 @@ do_scores = 0			# !scores
 auto_scores = time.time() + 100	# periodical automatic scores showing
 score_throttle = time.time()	# !scores throttle timer
 autosave_timer = time.time() + 60
+autoclear_timer = time.time() + 800
 
 #########################################################################
 
@@ -184,6 +185,10 @@ def save_game():
 	sgam = open("sgam.pickle", "w")
 	pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
 	sgam.close()
+
+def clear_scores():
+	bot_say("Cleared scores")
+	scores = {owner: 0}
 
 if exec_shell:
 	print("python exec shell:")
@@ -387,8 +392,7 @@ while 1:
 
 			if quote == "!clear":
 				if user == owner:
-					scores = {owner: 0}
-					bot_say("Scores cleared")
+					clear_scores()
 
 			if len(quote.split(":")) > 1 and quote.split(":")[0]=="quizclown":
 				# the stfu cruft prevents abuse of this
@@ -404,8 +408,7 @@ while 1:
 					bot_say("%s: for the second time, please do not type my name like that. I ignore these lines." % user)
 
 
-	# TODO: use something fancier like itertools.repeat
-	# for constant stream of random questions
+	# Done with the questions, reshuffle and restart
 	if qid >= qc:
 		# TODO: move !reshuffle code to a common routine
 		bot_say("Reshuffling questions ...")
@@ -457,6 +460,10 @@ while 1:
 		autosave_timer = time.time() + 120
 		save_game()
 		print >> log_out, "autosaved game"
+
+	if time.time() > autoclear_timer and state == QUEST_DELAY:
+		autoclear_timer = time.time() + 800
+		clear_scores()
 
 	# Clear score request register even if no scores were displayed --
 	# it's best to discard throttled requests.
