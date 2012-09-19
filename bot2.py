@@ -113,6 +113,8 @@ qc = count / 2
 
 # shuffle question meta-indices
 def shuffle_questions():
+	global qnums, shuffle_sta
+
 	qnums = range(qc)
 	shuffle_sta = random.getstate()
 	random.shuffle(qnums)
