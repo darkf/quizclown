@@ -112,9 +112,12 @@ f.close()
 qc = count / 2
 
 # shuffle question meta-indices
-qnums = range(qc)
-shuffle_sta = random.getstate()
-random.shuffle(qnums)
+def shuffle_questions():
+	qnums = range(qc)
+	shuffle_sta = random.getstate()
+	random.shuffle(qnums)
+
+shuffle_questions()
 
 ########################################################################
 
@@ -379,9 +382,7 @@ while 1:
 
 			if quote=="!reshuffle" and time.time() >= rs_throttle:
 				bot_say("Reshuffling questions ...")
-				qnums = range(qc)
-				shuffle_sta = random.getstate()
-				random.shuffle(qnums)
+				shuffle_questions()
 				qid = 0
 				state = READY
 				rs_throttle = time.time() + 150
@@ -410,11 +411,8 @@ while 1:
 
 	# Done with the questions, reshuffle and restart
 	if qid >= qc:
-		# TODO: move !reshuffle code to a common routine
 		bot_say("Reshuffling questions ...")
-		qnums = range(qc)
-		shuffle_sta = random.getstate()
-		random.shuffle(qnums)
+		shuffle_questions()
 		qid = 0
 		state = READY
 		rs_throttle = time.time() + 150
