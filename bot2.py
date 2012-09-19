@@ -245,7 +245,7 @@ while 1:
 			last_sign_of_life = time.time()
 
 		if words[0]=='PING' and not testing:
-			s.send("PONG "+word[1]+"\r\n")
+			s.send("PONG "+words[1]+"\r\n")
 
 		# :long-nick KICK #channel quizclown :reason
 		if len(words) > 2 and words[1]=='KICK' and words[3] == 'quizclown':
