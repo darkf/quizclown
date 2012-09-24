@@ -69,6 +69,8 @@ kicks = 0
 
 last_sign_of_life = time.time()	# last time anything happened
 
+last_ping = None
+
 # projected timestamp of next question asking
 
 if testing:
@@ -190,6 +192,7 @@ def save_game():
 	sgam = open("sgam.pickle", "w")
 	pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
 	sgam.close()
+	print >> log_out, "saved game"
 
 def clear_scores():
 	bot_say("Cleared scores")
@@ -233,6 +236,13 @@ while 1:
 		# wake up from snooze
 		state = last_live_state
 
+	# If the network has been completely dead
+	# for over 3 minutes, hang up and leave.
+	if time.time() - max(last_sign_of_life, last_ping) > 180:
+		print >> log_out, "Network dead. Hanging up."
+		save_game()
+		sys.exit(0)
+
 	if ready[0]:
 		if testing:
 			# local debug shell - parse command
@@ -255,6 +265,7 @@ while 1:
 			last_sign_of_life = time.time()
 
 		if words[0]=='PING' and not testing:
+			last_ping = time.time()
 			s.send("PONG "+words[1]+"\r\n")
 
 		# :long-nick KICK #channel quizclown :reason
