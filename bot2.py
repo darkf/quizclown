@@ -230,11 +230,12 @@ while 1:
 		if state != SNOOZING:
 			# start snooze
 			bot_say("Snoozing")
-			last_live_state = state
 			state = SNOOZING
 	elif state == SNOOZING:
 		# wake up from snooze
-		state = last_live_state
+		# restate current question in 3 seconds.
+		state = QUEST_DELAY
+		timeout = time.time() + 3
 
 	# If the network has been completely dead
 	# for over 3 minutes, hang up and leave.
