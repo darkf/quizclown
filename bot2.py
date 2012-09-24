@@ -88,7 +88,7 @@ do_scores = 0			# !scores
 auto_scores = time.time() + 100	# periodical automatic scores showing
 score_throttle = time.time()	# !scores throttle timer
 autosave_timer = time.time() + 60
-autoclear_timer = time.time() + 800
+autoclear_timer = time.time() + 360
 
 #########################################################################
 
@@ -474,7 +474,7 @@ while 1:
 		print >> log_out, "autosaved game"
 
 	if time.time() > autoclear_timer and state == QUEST_DELAY:
-		autoclear_timer = time.time() + 800
+		autoclear_timer = time.time() + 360
 		clear_scores()
 
 	# Clear score request register even if no scores were displayed --
