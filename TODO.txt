@@ -1,8 +1,10 @@
 
 	- more elaborate score-keeping ?
-	  e.g. resetting every N minutes
+	  e.g. resetting every N minutes -> DONE
 
 	- !susp (suspend) command
+		Well, as it is, the bot suspends itself
+		when nobody is online for a while.
 
 	- comments:
 		"It gives hints to fast btw"		(tweaked)
