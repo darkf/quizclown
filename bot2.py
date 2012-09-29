@@ -189,12 +189,16 @@ def print_info():
 
 
 def save_game():
+	global sgam
+
 	sgam = open("sgam.pickle", "w")
 	pickle.dump({"shuffle_sta": shuffle_sta, "question_number": question_number, "scores": scores, "stfu": stfu}, sgam)
 	sgam.close()
 	print >> log_out, "saved game"
 
 def clear_scores():
+	global scores
+
 	if state != SNOOZE:
 		bot_say("Cleared scores")
 	scores = {owner: 0}
