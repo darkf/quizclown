@@ -206,10 +206,10 @@ if exec_shell:
 while 1:
 	if not testing:
 		if exec_shell:
-			shell_ready = select.select([sys.stdin], [], [])
-		ready = select.select([s], [], [])
+			shell_ready = select.select([sys.stdin], [], [], 1)
+		ready = select.select([s], [], [], 1)
 	else:
-		ready = select.select([sys.stdin], [], [])
+		ready = select.select([sys.stdin], [], [], 1)	
 	
 	if exec_shell:
 		if shell_ready[0]:
