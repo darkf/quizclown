@@ -42,15 +42,15 @@ except IOError:
 	use_custom_login = False	
 
 # bot state
-READY = 0			# ready to ask a new question
+ASK_QUESTION = 0		# ready to ask a new question
 WAIT_ANSWER = 1			# waiting for an answer
-QUEST_DELAY = 2			# delay between questions
-SNOOZING = 3			# for when nobody is around
-state = QUEST_DELAY
+PAUSE = 2			# delay between questions
+SNOOZE = 3			# for when nobody is around
+state = PAUSE
 
 # setup variables
 scores = {owner: 0}		# username -> score dictionary
-qid = 0				# current question
+question_number = 0		# current question
 quest = []			# question table
 ans = []			# answer table
 qc = 0				# total question count
@@ -82,7 +82,7 @@ heur = ""			# accpeted question substring
 skips = 0			# skip votes
 skippers = []			# skip-voting users
 
-throttle = time.time()		# !hint throttle timer
+hint_throttle = time.time()	# !hint throttle timer
 
 do_scores = 0			# !scores
 auto_scores = time.time() + 100	# periodical automatic scores showing
@@ -132,7 +132,7 @@ try:
 	savedat = pickle.load(sgam)
 	sgam.close()
 	save_shuffle_sta = savedat["shuffle_sta"]
-	qid = savedat["qid"]
+	question_number = savedat["question_number"]
 	scores = savedat["scores"]
 	stfu = savedat["stfu"]
 
@@ -190,7 +190,7 @@ def print_info():
 
 def save_game():
 	sgam = open("sgam.pickle", "w")
-	pickle.dump({"shuffle_sta": shuffle_sta, "qid": qid, "scores": scores, "stfu": stfu}, sgam)
+	pickle.dump({"shuffle_sta": shuffle_sta, "question_number": question_number, "scores": scores, "stfu": stfu}, sgam)
 	sgam.close()
 	print >> log_out, "saved game"
 
@@ -227,14 +227,14 @@ while 1:
 	# if nothing's been happening for too long,
 	# snooze.
 	if time.time() - last_sign_of_life > 70:
-		if state != SNOOZING:
+		if state != SNOOZE:
 			# start snooze
 			bot_say("Snoozing")
-			state = SNOOZING
-	elif state == SNOOZING:
+			state = SNOOZE
+	elif state == SNOOZE:
 		# wake up from snooze
 		# restate current question in 3 seconds.
-		state = QUEST_DELAY
+		state = PAUSE
 		timeout = time.time() + 3
 
 	# If the network has been completely dead
@@ -315,8 +315,8 @@ while 1:
 			user = words[0].split(":")[1]
 			user = user.split("!")[0]
 	
-			heur = heuristic.heuristic(ans[qnums[qid]])
-			full_ans = heuristic.plain_question(ans[qnums[qid]])
+			heur = heuristic.heuristic(ans[qnums[question_number]])
+			full_ans = heuristic.plain_question(ans[qnums[question_number]])
 
 			# was it a correct answer ?
 			if good_enough(quote, full_ans) or (heur != "" and good_enough(quote, heur)):
@@ -327,8 +327,8 @@ while 1:
 	
 				scores[user] += 1
 	
-				qid += 1
-				state = QUEST_DELAY
+				question_number += 1
+				state = PAUSE
 				if lurkmode:
 					timeout = time.time() + random.randrange(60, 100)			
 				else:
@@ -336,8 +336,8 @@ while 1:
 		
 			# was it a command ?
 
-			if (quote=="!ask" or quote=="!next") and state==QUEST_DELAY:
-				state = READY
+			if (quote=="!ask" or quote=="!next") and state==PAUSE:
+				state = ASK_QUESTION
 
 			if quote=="!squit":
 				if user==owner:
@@ -352,9 +352,9 @@ while 1:
 					sys.exit(0)
 
 			if quote=="!hint":
-				if time.time() >= throttle:
+				if time.time() >= hint_throttle:
 					hint_timer = time.time()
-					throttle = time.time() + 3
+					hint_throttle = time.time() + 3
 
 			if quote=="!scores" or quote=="!score":
 				do_scores = 1
@@ -387,9 +387,9 @@ while 1:
 						skips = 0
 						skippers = []
 						skip_stfu = {owner: 0}
-						bot_say("skipping question "+str(qnums[qid]+1)+"")
-                                		qid += 1       
-	        	                        state = QUEST_DELAY
+						bot_say("skipping question "+str(qnums[question_number]+1)+"")
+                                		question_number += 1       
+	        	                        state = PAUSE
 						if lurkmode:
 							timeout = time.time() + random.randrange(60, 200)			
 						else:
@@ -398,8 +398,8 @@ while 1:
 			if quote=="!reshuffle" and time.time() >= rs_throttle:
 				bot_say("Reshuffling questions ...")
 				shuffle_questions()
-				qid = 0
-				state = READY
+				question_number = 0
+				state = ASK_QUESTION
 				rs_throttle = time.time() + 150
 
 			if quote == "!info" and time.time() >= info_throttle:
@@ -425,18 +425,18 @@ while 1:
 
 
 	# Done with the questions, reshuffle and restart
-	if qid >= qc:
+	if question_number >= qc:
 		bot_say("Reshuffling questions ...")
 		shuffle_questions()
-		qid = 0
-		state = READY
+		question_number = 0
+		state = ASK_QUESTION
 		rs_throttle = time.time() + 150
 
 	if time.time() >= hint_timer and state==WAIT_ANSWER:	
-		hint = hints.make_hint(heuristic.plain_question(ans[qnums[qid]]))
+		hint = hints.make_hint(heuristic.plain_question(ans[qnums[question_number]]))
 		bot_say("Hint: %s" % hint)
 		hint_timer = time.time() + 12
-		throttle = time.time() + 3
+		hint_throttle = time.time() + 3
 
 	if time.time() >= score_throttle and do_scores:
 		if sum(scores.values()) == 0:
@@ -482,7 +482,7 @@ while 1:
 	# it's best to discard throttled requests.
 	do_scores = 0
 	
-	if time.time() >= auto_scores and state != SNOOZING:
+	if time.time() >= auto_scores and state != SNOOZE:
 		# for the players' convenience, we
 		# automatically call the "!score" command
 		# every N seconds.
@@ -493,12 +493,12 @@ while 1:
 		do_scores = 1
 
 	# delay between questions
-	if state == QUEST_DELAY and time.time() >= timeout:
-		state = READY
+	if state == PAUSE and time.time() >= timeout:
+		state = ASK_QUESTION
 
 	# ready to ask a question !
-	if state == READY:
-		bot_say("%d: %s" % (qnums[qid]+1, quest[qnums[qid]]))
+	if state == ASK_QUESTION:
+		bot_say("%d: %s" % (qnums[question_number]+1, quest[qnums[question_number]]))
 		question_time = time.time()
 		hint_timer = time.time() + 8
 		state = WAIT_ANSWER
