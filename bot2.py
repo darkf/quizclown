@@ -238,8 +238,8 @@ while 1:
 		timeout = time.time() + 3
 
 	# If the network has been completely dead
-	# for over 3 minutes, hang up and leave.
-	if time.time() - max(last_sign_of_life, last_ping) > 180:
+	# for over 10 minutes, hang up and leave.
+	if time.time() - max(last_sign_of_life, last_ping) > 60 * 10:
 		print >> log_out, "Network dead. Hanging up."
 		save_game()
 		sys.exit(0)
