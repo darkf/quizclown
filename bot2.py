@@ -301,10 +301,11 @@ while 1:
 		# hack to allow owner to issue commands in private
 		# (useful if e.g. the bot gets kicked)
 		if len(words)>2 and words[1]=='PRIVMSG' and words[2]!=chan:
-			user = words[0].split(":")[1]
-			user = user.split("!")[0]
-			if user == owner:
-				words[2] = chan
+			if len(words[0].split(":")) > 1:
+				user = words[0].split(":")[1]
+				user = user.split("!")[0]
+				if user == owner:
+					words[2] = chan
 
 		if len(words)>2 and words[1]=='PRIVMSG' and words[2]==chan:
 			# somebody said something in the channel
