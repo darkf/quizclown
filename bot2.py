@@ -195,7 +195,8 @@ def save_game():
 	print >> log_out, "saved game"
 
 def clear_scores():
-	bot_say("Cleared scores")
+	if state != SNOOZE:
+		bot_say("Cleared scores")
 	scores = {owner: 0}
 
 if exec_shell:
