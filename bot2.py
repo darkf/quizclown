@@ -474,7 +474,7 @@ while 1:
 		save_game()
 		print >> log_out, "autosaved game"
 
-	if time.time() > autoclear_timer and state == QUEST_DELAY:
+	if time.time() > autoclear_timer:
 		autoclear_timer = time.time() + 360
 		clear_scores()
 
