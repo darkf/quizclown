@@ -266,8 +266,10 @@ while 1:
 
 		words = line.split(" ")
 
-		if len(words) > 0 and words[0] != 'PING':
-			# something happened
+		if len(words) > 0 and words[0] not in ['PING', 'JOIN', 'PART']:
+			# something, which we have deemed significant
+			# based on arbitrary but agreed-upon rules,
+			# has happened
 			last_sign_of_life = time.time()
 
 		if words[0]=='PING' and not testing:
