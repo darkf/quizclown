@@ -25,6 +25,11 @@ How to set up quizclown
    Alternately, you can double-click on bot2.py on
    Windows.
 
+   There is a ./quizclownd script available, which
+   daemon-ifies quizclown. Make sure to read the
+   comments in it and set up your system to use
+   it properly if you want to use that script.
+
 Updating quizclown
 
    Replace the *.py files in your quizclown directory

@@ -1,0 +1,23 @@
+# Quick and dirty script to run the bot as 
+# a daemon. Real daemons typically have more
+# sophisticated, robust working than this, and
+# can be configured to run automatically when
+# you startup. (This is what I gather anyway.
+# I'm not a sysadmin).
+#
+# I use the daemon command from
+# http://libslack.org/daemon/.
+# You have to put your quizclown directory
+# in someplace owned by root for this to work.
+# (I use /var/quizclown).
+#
+# You probably want to put some sort of configuration
+# for the log rotator. On Linux, I make a file
+# /etc/logrotate.d/quizclown and write in it:
+# /var/log/quizclown {
+#        daily
+#        rotate 1
+#        missingok
+# }
+
+daemon -D `pwd` -E /var/log/quizclown ./bot2.py
