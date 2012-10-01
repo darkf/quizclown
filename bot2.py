@@ -266,7 +266,7 @@ while 1:
 
 		words = line.split(" ")
 
-		if len(words) > 1 and words[0] != 'PING' and words[1] not in ['PING', 'JOIN', 'PART']:
+		if len(words) > 1 and words[0] != 'PING' and words[1] not in ['PING', 'JOIN', 'PART', 'NICK']:
 			# something, which we have deemed significant
 			# based on arbitrary but agreed-upon rules,
 			# has happened
